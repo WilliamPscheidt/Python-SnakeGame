@@ -19,7 +19,6 @@ print("localizacao", comidaX, comidaY)
 def spawnarComida():
     pygame.draw.circle(screen, (cor1, cor2, cor3), (comidaX, comidaY), 5)
     if localizacaoInicial_x==comidaX and localizacaoInicial_y==comidaY:
-        print("Comedor do KRL!")
         print(localizacaoInicial_x)
         print(localizacaoInicial_y)
 
