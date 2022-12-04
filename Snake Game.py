@@ -1,66 +1,115 @@
-import pygame
+import os
+import time
 import random
+import keyboard
 
-pygame.init()
+campo = (['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"],['#', '#', '#', '#', '#', '#', "#", "#"])
+vidas = 4
+score = 0
 
-tamanho = 512
-largura = 512
+def limparTela():
+    os.system('cls')
 
-screen = pygame.display.set_mode((tamanho,largura))
+def printCampo():
+    limparTela()
+    print("Pontos:", score, " | Vidas: ", vidas)
+    for i in range(14):
+        print(campo[i])
 
-localizacaoInicial_x = 1
-localizacaoInicial_y = 1
+def spawnPlayer(): 
+    global playerPosX  
+    global playerPosY 
+    playerPosY = random.sample(range(7), k=1)[0]
+    playerPosX = random.sample(range(14), k=1)[0]
+    campo[playerPosX][playerPosY] = '$'
 
-comidaX = random.randint(1, 512)
-comidaY = random.randint(1, 512)
+def spawnComida():
+    global comidaPosX
+    global commidaPosY
+    commidaPosY = random.sample(range(7), k=1)[0]
+    comidaPosX = random.sample(range(14), k=1)[0]
+    campo[comidaPosX][commidaPosY] = '@'
 
-print("localizacao", comidaX, comidaY)
+def removerVida():
+    global vidas
+    if(vidas <= 1):
+        print("Infelizmente você perdeu o game =(")
+    print("Você perdeu uma vida!")
+    vidas -= 1
 
-def spawnarComida():
-    pygame.draw.circle(screen, (cor1, cor2, cor3), (comidaX, comidaY), 5)
-    if localizacaoInicial_x==comidaX and localizacaoInicial_y==comidaY:
-        print(localizacaoInicial_x)
-        print(localizacaoInicial_y)
+def moverJogador(movimento):
+    global playerPosY
+    global playerPosX
+    global score
+    campo[playerPosX][playerPosY] = '#'
+
+    if(movimento == 'd'):
+        if (playerPosY >= 7):
+            removerVida()
+            return
+        playerPosX = playerPosX
+        playerPosY = playerPosY + 1
+        campo[playerPosX][playerPosY] = '$'
+        if (playerPosX == comidaPosX and playerPosY == commidaPosY):
+            campo[comidaPosX][commidaPosY] = '#'
+            score = score + 1
+            spawnComida()
+    elif(movimento == 'a'):
+        if (playerPosY <= 0):
+            removerVida()
+            return
+        playerPosX = playerPosX
+        playerPosY = playerPosY - 1
+        campo[playerPosX][playerPosY] = '$'
+        if (playerPosX == comidaPosX and playerPosY == commidaPosY):
+            campo[comidaPosX][commidaPosY] = '#'
+            score = score + 1
+            spawnComida()
+    elif(movimento == 'w'):
+        if (playerPosX <= 0):
+            removerVida()
+            return
+        playerPosX = playerPosX - 1
+        playerPosY = playerPosY
+        campo[playerPosX][playerPosY] = '$'
+        if (playerPosX == comidaPosX and playerPosY == commidaPosY):
+            campo[comidaPosX][commidaPosY] = '#'
+            score = score + 1
+            spawnComida()
+    elif(movimento == 's'):
+        if (playerPosX >= 13):
+            removerVida()
+            return
+        playerPosX = playerPosX + 1
+        playerPosY = playerPosY
+        campo[playerPosX][playerPosY] = '$'
+        if (playerPosX == comidaPosX and playerPosY == commidaPosY):
+            campo[comidaPosX][commidaPosY] = '#'
+            score = score + 1
+            spawnComida()
+    else:
+        print("Movimento inválido")
+
+    printCampo()
+
+spawnComida()
+spawnPlayer()
+printCampo()
 
 while True:
-    screen.fill((0, 0, 0))
-
-    cor1=255
-    cor2=255
-    cor3=255
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-
-    pressed = pygame.key.get_pressed()
-
-    spawnarComida()
-
-    if pressed[pygame.K_UP]:
-        localizacaoInicial_x=localizacaoInicial_x-0.1
-        pygame.draw.circle(screen, (cor1, cor2, cor3), (localizacaoInicial_y, localizacaoInicial_x), 5)
-        if (localizacaoInicial_x <= 0):
-            localizacaoInicial_x=512
-        pygame.display.flip()
-
-    elif pressed[pygame.K_DOWN]:
-        localizacaoInicial_x=localizacaoInicial_x+0.1
-        pygame.draw.circle(screen, (cor1, cor2, cor3), (localizacaoInicial_y, localizacaoInicial_x), 5)
-        if (localizacaoInicial_x >= 512):
-            localizacaoInicial_x=1
-        pygame.display.flip()
-
-    elif pressed[pygame.K_RIGHT]:
-        localizacaoInicial_y=localizacaoInicial_y+0.1
-        pygame.draw.circle(screen, (cor1, cor2, cor3), (localizacaoInicial_y, localizacaoInicial_x), 5)
-        if (localizacaoInicial_y >= 512):
-            localizacaoInicial_y=1
-        pygame.display.flip()
-
-    elif pressed[pygame.K_LEFT]:
-        localizacaoInicial_y=localizacaoInicial_y-0.1
-        pygame.draw.circle(screen, (cor1, cor2, cor3), (localizacaoInicial_y, localizacaoInicial_x), 5)
-        if (localizacaoInicial_y <= 0):
-            localizacaoInicial_y=512
-        pygame.display.flip()
+    if (vidas == 0):
+        limparTela()
+        print("Gameover, você perdeu!")
+    else:
+        if keyboard.is_pressed('d'):
+            time.sleep(0.1)
+            moverJogador("d")
+        if keyboard.is_pressed('a'):
+            time.sleep(0.1)
+            moverJogador("a")
+        if keyboard.is_pressed('w'):
+            time.sleep(0.1)
+            moverJogador("w")
+        if keyboard.is_pressed('s'):
+            time.sleep(0.1)
+            moverJogador("s")
