@@ -1,2 +1,1 @@
-# Python-SnakeGame
-Em desenvolvimento - Jogo da cobrinha :3
+Snake Game in Console using pure Python
